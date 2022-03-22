@@ -1,7 +1,9 @@
 <?php
 
+use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\CompanyController;
 use Illuminate\Http\Request;
+use Illuminate\Routing\RouteGroup;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -15,9 +17,19 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+// Authentication
+Route::group(['controller' => AuthController::class, 'prefix' => 'auth'], function () {
+    Route::post('/login', 'login');
+
+    Route::middleware('auth:sanctum')->group(function () {
+        Route::get('/me', 'me');
+        Route::post('/logout', 'logout');
+    });
+});
+
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
 
-Route::apiResource('companies', CompanyController::class);
+Route::apiResource('companies', CompanyController::class)->middleware('auth:sanctum');

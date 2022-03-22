@@ -23,11 +23,17 @@ class CompanyRequest extends FormRequest
      */
     public function rules()
     {
-        return [
+        $rules = [
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:companies',
-            'address' => 'nullable|string|max:255',
-            'website' => 'nullable|string|max:255',
+            'address' => 'string|max:255',
+            'website' => 'string|max:255',
         ];
+
+        if ($this->method() == 'PUT') {
+            $rules['email'] = 'required|string|email|max:255|unique:companies,email,' . $this->company->id;
+        }
+
+        return $rules;
     }
 }
